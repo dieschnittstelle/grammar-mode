@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<!-- this is a test application with the grammar-mode generator, using the intergration
+of its generated output as proposed by the google-modes project -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- codemirror -->
+    <script src="../node_modules/codemirror/lib/codemirror.js"></script>
+    <link rel=stylesheet href="../node_modules/codemirror/lib/codemirror.css">
+    <!-- grammar-mode -->
+    <script src="../src/mode.js"></script>
+    <!-- my own grammar wrapper -->
+    <script type="module" src="../testapp/js/mygrammar.js"></script>
+    <!-- for testing setup consistency: google java grammar wrapper -->
+    <script type="module" src="../testapp/js/java.js"></script>
+    <style>
+        .CodeMirror { border: 1px solid silver; height: 500px; }
+    </style>
+    <title>Test Grammar Mode</title>
+</head>
+<body>
+<textarea id="code-mygrammar">
+variable test
+</textarea>
+<!-- we check whether the google mode for java works... -->
+<textarea id="code-java">
+import com.demo.util.MyType;
+import com.demo.util.MyInterface;
+
+public enum Enum {
+  VAL1, VAL2, VAL3
+}
+
+public class Class<T, V> implements MyInterface {
+  public static final MyType<T, V> member;
+
+  private class InnerClass {
+    public int zero() {
+      return 0;
+    }
+  }
+
+  @Override
+  public MyType method() {
+    return member;
+  }
+
+  public void method2(MyType<T, V> value) {
+    method();
+    value.method3();
+    member = value;
+  }
+}
+</textarea>
+</body>
+<script>
+    window.onload = () => {
+        let editors = {}
+        ;[
+            {name: "mygrammar"},
+            {name: "java"}
+        ].forEach(spec => {
+            console.log("creating editor for: ", spec);
+            const editormode = "test-" + spec.name;
+            console.log("mode to be used is: ", editormode);
+            editors[spec.name] = CodeMirror.fromTextArea(document.querySelector(`#code-${spec.name}`),
+                Object.assign({
+                    mode: editormode,
+                    autoCloseBrackets: true,
+                    continueComments: {key: "Enter", continueLineComment: false},
+                    foldGutter: true,
+                    gutters: ["gutter", "CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+                    highlightSelectionMatches: {showToken: true, delay: 500, annotateScrollbar: true},
+                    indentUnit: 2,
+                    inputStyle: "textarea",
+                    lineNumbers: true,
+                    lineWrapping: false,
+                    matchBrackets: {maxScanLines: 5000},
+                    pasteLinesPerSelection: false,
+                    readOnly: false,
+                    scrollPastEnd: false,
+                    showCursorWhenSelecting: true,
+                    showTrailingSpace: true,
+                    smartIndent: true,
+                    styleActiveLine: true,
+                    styleSelectedText: true,
+                    tabSize: 2,
+                    undoDepth: 500,
+                    vimMode: false,
+                }, spec));
+        });
+        console.log("created editors: ", editors);
+    }
+</script>
+</html>

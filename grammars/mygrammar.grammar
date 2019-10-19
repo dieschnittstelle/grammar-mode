@@ -1,0 +1,11 @@
+skip (" " | "\t" | "\n")* {
+  Expr { (num | var | ParenExpr) (op Expr)? }
+  context ParenExpr { "(" Expr ")" }
+}
+tokens {
+  num="number" { digit+ }
+  var="variable" { letter (letter | digit)* }
+  op { "+" | "-" | "/" | "*" }
+}
+digit { "0"-"9" }
+letter { "a"-"z" | "A"-"Z" }
